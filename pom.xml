@@ -79,5 +79,6 @@
 		<module>brick-base</module>
 		<module>brick-console</module>
 		<module>brick-site</module>
+		<module>brick-web</module>
 	</modules>
 </project>
