@@ -38,6 +38,8 @@ public class Order extends DataEntity<Admin, Long> {
 
 	/** 订单名称分隔符 */
 	private static final String NAME_SEPARATOR = " ";
+	
+	public static final String SN_TYPE = "order";
 
 	/**
 	 * 订单状态

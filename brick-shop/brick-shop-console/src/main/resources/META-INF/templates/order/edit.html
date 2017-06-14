@@ -1,0 +1,298 @@
+<!doctype html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<section class="content-header">
+		<h1>
+			订单 <small th:text="(${entity.new}?'新建':'编辑')+'订单'"></small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="javascript:;"><i class="fa fa-file-archive-o"></i> 订单管理</a></li>
+			<li class="active" th:text="(${entity.new}?'新建':'编辑')+'订单'"></li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<form id="form-order" class="form-horizontal" th:action="@{/order/save}" method="post" th:object="${entity}">
+			<input type="hidden" name="id" th:value="*{id}" />
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab_info" data-toggle="tab">订单信息</a></li>
+					<li><a href="#tab_orderItems" data-toggle="tab">商品信息</a></li>
+					<li><a href="#tab_shippings" data-toggle="tab">发货信息</a></li>
+					<li><a href="#tab_orderLogs" data-toggle="tab">订单日志</a></li>
+				</ul>
+				<div class="tab-content" style="min-height: 400px;">
+					<div class="tab-pane active" id="tab_info">
+						<div class="form-horizontal">
+							<div class="box-body">
+
+								<div class="form-group">
+									<label for="input-sn" class="col-sm-2 control-label">订单编号</label>
+									<div class="col-sm-10">
+										<span class="form-control" th:text="*{sn}"></span> <input type="hidden" name="sn" th:value="*{sn}">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-customer" class="col-sm-2 control-label">客户</label>
+									<div class="col-sm-10">
+										<div class="input-group">
+											<input type="hidden" name="customer" th:value="*{customer}?*{customer.id}:''" id="input-customer-hidden"> <input
+												class="form-control" id="input-customer" placeholder="请选择客户" th:value="*{customer}?*{customer.name}:''" readonly="readonly" type="text">
+											<span class="input-group-btn">
+												<button id="input-customer-button" class="btn btn-default" type="button">选择客户</button>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="select-address" class="col-sm-2 control-label">快速填入地址</label>
+									<div class="col-sm-10">
+										<select id="select-address" class="form-control">
+											<option value="">--未选择--</option>
+											<option value="unshipped" selected="selected">未发货</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-consignee" class="col-sm-2 control-label">收货人</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-consignee" placeholder="请输入收货人" name="consignee" th:value="*{consignee}" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="input-address" class="col-sm-2 control-label">地址</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-address" placeholder="请输入地址" name="address" th:value="*{address}" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="input-zipCode" class="col-sm-2 control-label">邮编</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-zipCode" placeholder="请输入邮编" name="zipCode" th:value="*{zipCode}" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="input-phone" class="col-sm-2 control-label">联系电话</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-phone" placeholder="请输入联系电话" name="phone" th:value="*{phone}" type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-memo" class="col-sm-2 control-label">附言</label>
+
+									<div class="col-sm-10">
+										<textarea class="form-control" id="input-memo" name="memo" rows="3" placeholder="请输入备注" th:text="*{memo}"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane" id="tab_orderItems">
+						<input type="hidden" name="orderItemsCount" value="" />
+						<div class="box-header">
+							<h3 class="box-title">商品信息</h3>
+
+							<div class="box-tools">
+								<div class="btn-group btn-group-sm">
+									<a id="button-orderItem-add" class="btn btn-primary" href="javascript:;"> <i class="fa fa-plus"></i> 添加
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="box-body no-padding">
+							<table id="table-product" class="table table-bordered">
+								<thead>
+									<tr>
+										<th style="width: 40%">商品名称</th>
+										<th style="width: 20%">数量</th>
+										<th style="width: 20%">单位</th>
+										<th style="width: 10%">排序号</th>
+										<th class="text-center command-column" style="width: 10%">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="orderItem : *{orderItems}">
+										<td class="product-choice">
+											<div class="input-group">
+												<input type="hidden" name="product" th:value="${orderItem.product}?${orderItem.product.id}:''"> <input class="form-control"
+													placeholder="请选择商品" th:value="${orderItem.fullName}" readonly="readonly" type="text"> <span class="input-group-btn">
+													<button class="btn btn-default" type="button">选择商品</button>
+												</span>
+											</div>
+										</td>
+										<td><input class="form-control" name="quantity" th:value="${orderItem.quantity}" placeholder="请输入数量" type="text"></td>
+										<td><input class="form-control" name="unit" placeholder="请选择单位" type="text"></td>
+										<td><input class="form-control" name="sortNo" placeholder="请输入排序号" type="text"></td>
+										<td class="text-center command-column">
+											<div class="btn-group btn-group-sm">
+												<a class="btn btn-primary" href="javascript:;" onclick="$(this).closest('tr').remove();"> <i class="glyphicon glyphicon-remove"></i>
+												</a>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="tab-pane" id="tab_shippings"></div>
+
+					<div class="tab-pane" id="tab_orderLogs"></div>
+
+				</div>
+			</div>
+
+			<div class="box-footer">
+				<button type="button" class="btn btn-default" onclick="location.href='#/page/order'">返回列表</button>
+				<button type="submit" class="btn btn-success pull-right">保存</button>
+			</div>
+		</form>
+	</section>
+
+
+	<script type="text/javascript">
+		requirejs([ "domReady", "validator", "bootgrid" ], function(ready) {
+			ready(function() {
+				activeMenu("order");
+
+				var $addressSelect = $("#select-address");
+				var $customerId = $("#input-customer-hidden");
+				var $customerName = $("#input-customer");
+				var $orderForm = $("#form-order");
+				var $inputConsignee = $orderForm.find("input[name=consignee]");
+				var $inputAddress = $orderForm.find("input[name=address]");
+				var $inputPhone = $orderForm.find("input[name=phone]");
+				var $inputZipCode = $orderForm.find("input[name=zipCode]");
+
+				var setAddress = function() {
+					var selVal = $addressSelect.find("option:selected").val();
+					if (selVal.indexOf("|") < 0) {
+						$inputConsignee.val("");
+						$inputPhone.val("");
+						$inputAddress.val("");
+						$inputZipCode.val("");
+					} else {
+						var values = selVal.split("|");
+						$inputConsignee.val(values[0]);
+						$inputPhone.val(values[1]);
+						$inputAddress.val(values[2]);
+						$inputZipCode.val(values[3]);
+					}
+				}
+
+				$addressSelect.on("change", function() {
+					setAddress();
+				})
+
+				var refreshAddress = function() {
+					$addressSelect.empty();
+					var customerId = $customerId.val();
+					if (customerId && customerId != "") {
+						$.get(base + "/customer/address", {
+							id : customerId
+						}, function(resp) {
+							$.each(resp, function(i, item) {
+								$addressSelect.append("<option" + (i == 0 ? "" : " selected='selected'") + " value='" + item.consignee + "|"
+										+ item.phone + "|" + item.detail + "|" + item.zipCode + "'>" + item.consignee + "  " + item.phone + "  "
+										+ item.detail + "  " + item.zipCode + "</option>");
+							});
+
+							setAddress();
+						}, "json");
+					}
+				}
+
+				refreshAddress();
+
+				var showProductDialog = function($td) {
+					var $button = $td.find("button");
+					var $value = $td.find("input[type=hidden]");
+					var $display = $td.find("input[type=text]");
+					$button.on("click")
+				}
+
+				var $selectGrid = null;
+				$("#input-customer-button").on("click", function() {
+					showGridDialog("选择客户", base + "/customer/select", base + "/customer/page", function(item) {
+						if (item) {
+							$customerId.val(item.id);
+							$customerName.val(item.name);
+						}
+						refreshAddress();
+					});
+				});
+
+				var initShowProductDialogButton = function($button) {
+					$button.on("click", function() {
+						var $button = $(this);
+						var $td = $button.closest("td");
+						var $value = $td.find("input[type=hidden]");
+						var $display = $td.find("input[type=text]");
+						showGridDialog("选择商品", base + "/product/select", base + "/product/page", function(item) {
+							if (item) {
+								$value.val(item.id);
+								$display.val(item.fullName);
+							}
+						});
+					});
+				}
+
+				$(".product-choice button").on("click", function() {
+					var $button = $(this);
+					initShowProductDialogButton($button);
+				});
+
+				$("#button-orderItem-add").on("click", function() {
+					var $tr = $("<tr />");
+					var $td1 = $("<td />");
+					var $td2 = $("<td />");
+					var $td3 = $("<td />");
+					var $td4 = $("<td />");
+					var $td5 = $("<td />").addClass("text-center").addClass("command-column");
+
+					var $input_group = $("<div class=\"input-group\" />");
+					var $input_group_hidden = $("<input type=\"hidden\" name=\"product\">");
+					var $input_group_text = $("<input class=\"form-control\" placeholder=\"请选择商品\" readonly=\"readonly\" type=\"text\">");
+					var $input_group_span = $("<span class=\"input-group-btn\"/>");
+					var $input_group_btn = $("<button class=\"btn btn-default\" type=\"button\">选择商品</button>");
+					$input_group_span.append($input_group_btn);
+					$input_group.append($input_group_hidden).append($input_group_text).append($input_group_span);
+					$td1.append($input_group);
+
+					var $input_quantity = $("<input class=\"form-control\" name=\"quantity\" placeholder=\"请输入数量\" type=\"text\">");
+					$td2.append($input_quantity);
+
+					var $input_unit = $("<input class=\"form-control\" name=\"unit\" placeholder=\"请选择单位\" type=\"text\">");
+					$td3.append($input_unit);
+
+					var $input_sort = $("<input class=\"form-control\" name=\"sortNo\" placeholder=\"请输入排序号\" type=\"text\">");
+					$td4.append($input_sort);
+
+					var $link_del = $("<a class=\"btn btn-primary btn-sm\" href=\"javascript:;\"> <i class=\"glyphicon glyphicon-remove\"></i></a>")
+					$td5.append($link_del);
+
+					$tr.append($td1).append($td2).append($td3).append($td4).append($td5);
+					$("#table-product>tbody").append($tr);
+
+					initShowProductDialogButton($input_group_btn);
+					$link_del.on("click", function() {
+						$(this).closest('tr').remove();
+					});
+				});
+
+				initValidateForm($orderForm, "#/page/order");
+			});
+		});
+	</script>
+</body>
+</html>
+

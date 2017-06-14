@@ -53,6 +53,8 @@ public class Product extends DataEntity<Admin, Long> {
 	/** 全称规格分隔符 */
 	public static final String FULL_NAME_SPECIFICATION_SEPARATOR = " ";
 	
+	public static final String SN_TYPE = "product";
+	
 	/** 编号 */
 	@NotNull
 	@Pattern(regexp = "^[0-9a-zA-Z_-]+$")
