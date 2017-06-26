@@ -204,13 +204,14 @@
 										</td>
 									</tr>
 									<tr th:if="${!entity.new}">
-										<td><i style="color: #d43f3a; line-height: 1.42857;" class="form-control fa fa-hand-o-right no-border"></i></td>
+										<td><i style="color: #d43f3a; line-height: 1.42857;" class="form-control fa fa-hand-o-right no-border"></i><input type="hidden"
+											name="specificationProducts" th:value="${entity.id}"></td>
 										<td th:each="specification : ${specifications}" th:class="'init-hide specification_'+${specification.id}"><select
 											th:name="'specification_'+${specification.id}" class="form-control" disabled="disabled">
 												<option th:each="specificationValue : ${specification.specificationValues}"
 													th:selected="${#lists.contains(entity.specificationValues, specificationValue)}" th:value="${specificationValue.id}"
 													th:text="${specificationValue.name}"></option>
-										</select> <input type="hidden" name="specificationProducts" th:value="${entity.id}"></td>
+										</select></td>
 										<td class="text-center command-column">
 											<div class="btn-group btn-group-sm">
 												<a class="btn btn-primary" title="当前规格商品不能删除" disabled href="javascript:;"> <i class="glyphicon glyphicon-remove"></i>
@@ -219,13 +220,13 @@
 										</td>
 									</tr>
 									<tr th:each="specificationProduct : *{siblings}">
-										<td></td>
+										<td><input type="hidden" name="specificationProducts" th:value="${specificationProduct.id}"></td>
 										<td th:each="specification : ${specifications}" th:class="'init-hide specification_'+${specification.id}"><select
 											th:name="'specification_'+${specification.id}" class="form-control" disabled="disabled">
 												<option th:each="specificationValue : ${specification.specificationValues}"
 													th:selected="${#lists.contains(specificationProduct.specificationValues, specificationValue)}" th:value="${specificationValue.id}"
 													th:text="${specificationValue.name}"></option>
-										</select> <input type="hidden" name="specificationProducts" th:value="${specificationProduct.id}"></td>
+										</select></td>
 										<td class="text-center command-column">
 											<div class="btn-group btn-group-sm">
 												<a class="btn btn-primary" href="javascript:;" onclick="$(this).closest('tr').remove();"> <i class="glyphicon glyphicon-remove"></i>

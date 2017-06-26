@@ -1,0 +1,173 @@
+<!doctype html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<section class="content-header">
+		<h1>
+			客户 <small>发货点</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="javascript:;"><i class="fa fa-cogs"></i> 系统管理</a></li>
+			<li class="active">客户发货点</li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title" th:text="'客户【'+${entity.name}+'】关联的发货点信息'"></h3>
+				<div class="box-tools">
+					<div class="btn-group btn-group-sm">
+						<a id="button-add" class="btn btn-primary" href="javascript:;"> <i class="fa fa-plus"></i> 添加发货点
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="box-body">
+				<table id="grid-deliveryCenter" class="table table-hover">
+					<thead>
+						<tr>
+							<th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">ID</th>
+							<th data-column-id="name">名称</th>
+							<th data-column-id="contact" data-css-class="hidden-xs hidden-sm" data-header-css-class="hidden-xs hidden-sm">联系人</th>
+							<th data-column-id="address" data-css-class="hidden-xs hidden-sm" data-header-css-class="hidden-xs hidden-sm">地址</th>
+							<th data-column-id="phone" data-css-class="hidden-xs hidden-sm" data-header-css-class="hidden-xs hidden-sm">手机</th>
+							<th data-formatter="commands" data-css-class="command-column" data-width="120px" data-sortable="false" data-align="center"
+								data-header-align="center">操作</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="box-footer">
+				<button type="button" class="btn btn-default" onclick="location.href='#/page/customer'">返回列表</button>
+			</div>
+		</div>
+
+	</section>
+
+	<script type="text/javascript" th:inline="javascript">
+		var customerId = /*[[${entity.id}]]*/"";
+	</script>
+
+	<script type="text/javascript">
+		requirejs(
+				[ "domReady", "bootgrid" ],
+				function(ready) {
+					ready(function() {
+						activeMenu("management_customer");
+
+						var gridDeliveryCenter = $("#grid-deliveryCenter")
+								.bootgrid(
+										{
+											navigation : 0,
+											selection : false,
+											sorting : false,
+											post : {
+												customer : customerId
+											},
+											url : base + "/customer/delivery/page",
+											formatters : {
+												"commands" : function(column, row) {
+													return "\
+<div class=\"btn-group btn-group-sm\" data-row-id=\""+row.id+"\">\
+	<a class=\"btn btn-primary command-delete\" href=\"javascript:;\">\
+		<i class=\"glyphicon glyphicon-remove\"></i>\
+	</a>\
+</div>";
+												}
+											}
+										});
+
+						gridDeliveryCenter.on("loaded.rs.jquery.bootgrid", function() {
+							var $table = $(this);
+							$table.find(".command-delete").on("click", function(e) {
+								var entity_id = $(this).closest(".btn-group").data("row-id");
+								//deleteRow($table, [ entity_id ]);
+							});
+						});
+
+						var $grid = null;
+						$("#button-add").on("click", function() {
+							$.confirm({
+								content : "url:" + base + "/deliveryCenter/select",
+								title : "选择发货点",
+								columnClass : 'col-md-10 col-md-offset-1 col-xs-12 col-xs-offset-0',
+								onContentReady : function(data, status, xhr) {
+									var $content = this.$content;
+									var $searchForm = $("#select-search-form");
+									var $searchPanel = $content.find("#select-search-panel");
+
+									$grid = $content.find("#select-grid-deliveryCenter").bootgrid({
+										url : base + "/customer/delivery/select",
+										keepSelection : true,
+										post : function() {
+											var keyValues = $searchForm.serialize();
+											var parameterMap = parseQueryString(keyValues);
+											parameterMap["customer"] = customerId;
+											return parameterMap;
+										}
+									});
+									$content.find("#select-search-button").on("click", function() {
+										$grid.bootgrid("reload");
+										return false;
+									});
+								},
+								buttons : {
+									confirm : {
+										text : "确定",
+										action : function() {
+											var selectedRows = $grid.bootgrid("getSelectedRows");
+											if (selectedRows && selectedRows.length > 0) {
+												$.post(base + "/customer/submitDeliveryCenters", {
+													id : customerId,
+													deliveryCenters : selectedRows
+												}, function(resp) {
+													if (resp.success) {
+														$.alert({
+															title : "提示",
+															content : "操作成功",
+															buttons : {
+																ok : {
+																	text : "确定"
+																}
+															}
+														});
+														gridDeliveryCenter.bootgrid("reload")
+													} else {
+														$.alert({
+															title : "提示",
+															content : resp.msg,
+															buttons : {
+																ok : {
+																	text : "确定"
+																}
+															}
+														});
+													}
+												}, "json");
+											} else {
+												$.alert({
+													title : "提示",
+													content : "请至少选择一个发货点",
+													buttons : {
+														ok : {
+															text : "确定"
+														}
+													}
+												});
+												return false;
+											}
+										}
+									},
+									cancel : {
+										text : "取消"
+									}
+								}
+							});
+						});
+
+					});
+				});
+	</script>
+</body>
+</html>
+

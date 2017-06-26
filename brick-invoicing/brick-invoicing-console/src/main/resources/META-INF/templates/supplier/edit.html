@@ -1,0 +1,198 @@
+<!doctype html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<section class="content-header">
+		<h1>
+			供应商 <small th:text="(${entity.new}?'新建':'编辑')+'供应商'"></small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="javascript:;"><i class="fa fa-cogs"></i> 系统管理</a></li>
+			<li class="active" th:text="(${entity.new}?'新建':'编辑')+'供应商'"></li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<form id="form-supplier" class="form-horizontal" th:action="@{/supplier/save}" method="post" th:object="${entity}">
+			<input type="hidden" name="id" th:value="*{id}" />
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab_info" data-toggle="tab">基本信息</a></li>
+					<li><a href="#tab_address" data-toggle="tab">收货地址</a></li>
+				</ul>
+				<div class="tab-content" style="min-height: 400px;">
+					<div class="tab-pane active" id="tab_info">
+						<div class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<label for="input-name" class="col-sm-2 control-label"><i class="required-tip">*</i>名称</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-name" placeholder="请输入名称" name="name" th:value="*{name}" type="text" data-bv-notempty="true"
+											data-bv-notempty-message="请填写名称">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-contact" class="col-sm-2 control-label">联系人</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-contact" placeholder="请输入联系人" name="contact" th:value="*{contact}" type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-phone" class="col-sm-2 control-label">联系电话</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-phone" placeholder="请输入联系电话" name="phone" th:value="*{phone}" type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-area" class="col-sm-2 control-label">区域</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-area" placeholder="请输入区域" name="area" th:value="*{area}" type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-memo" class="col-sm-2 control-label">备注</label>
+
+									<div class="col-sm-10">
+										<textarea class="form-control" id="input-memo" name="memo" rows="3" placeholder="请输入备注" th:text="*{memo}"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab_address">
+						<input type="hidden" name="addressCount" value="" />
+						<div class="box-header">
+							<h3 class="box-title">收货地址</h3>
+
+							<div class="box-tools">
+								<div class="btn-group btn-group-sm">
+									<a id="button-address-add" class="btn btn-primary" href="javascript:;"> <i class="fa fa-plus"></i> 添加
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="box-body no-padding">
+							<table id="table-address" class="table table-bordered">
+								<thead>
+									<tr>
+										<th style="width: 20%">收货人</th>
+										<th style="width: 40%">地址</th>
+										<th style="width: 20%">电话</th>
+										<th style="width: 10%">排序号</th>
+										<th class="text-center command-column" style="width: 10%">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="address : *{addresses}">
+										<td><input class="form-control" name="consignee" th:value="${address.consignee}" placeholder="请输入收货人" type="text"></td>
+										<td><input class="form-control" name="detail" th:value="${address.detail}" placeholder="请输入地址" type="text"></td>
+										<td><input class="form-control" name="phone" th:value="${address.phone}" placeholder="请输入电话" type="text"></td>
+										<td><input class="form-control" name="sortNo" th:value="${address.sortNo}" placeholder="请输入排序号" type="text"></td>
+										<td class="text-center command-column">
+											<div class="btn-group btn-group-sm">
+												<a class="btn btn-primary" href="javascript:;" onclick="$(this).closest('tr').remove();"> <i class="glyphicon glyphicon-remove"></i>
+												</a>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="box-footer">
+				<button type="button" class="btn btn-default" onclick="location.href='#/page/supplier'">返回列表</button>
+				<button type="submit" class="btn btn-success pull-right">保存</button>
+			</div>
+		</form>
+	</section>
+
+
+	<script type="text/javascript">
+		requirejs([ "domReady", "validator" ], function(ready) {
+			ready(function() {
+				activeMenu("management_supplier");
+				$("#button-address-add").on("click", function() {
+					var $tr = $("<tr />");
+					var $td1 = $("<td />");
+					var $td2 = $("<td />");
+					var $td3 = $("<td />");
+					var $td4 = $("<td />");
+					var $td5 = $("<td />").addClass("text-center").addClass("command-column");
+
+					var $input_consignee = $("<input class=\"form-control\" name=\"consignee\" placeholder=\"请输入收货人\" type=\"text\">");
+					$td1.append($input_consignee);
+
+					var $input_detail = $("<input class=\"form-control\" name=\"detail\" placeholder=\"请输入地址\" type=\"text\">");
+					$td2.append($input_detail);
+
+					var $input_phone = $("<input class=\"form-control\" name=\"phone\" placeholder=\"请输入联系电话\" type=\"text\">");
+					$td3.append($input_phone);
+					
+					var $input_sort = $("<input class=\"form-control\" name=\"sortNo\" placeholder=\"请输入排序号\" type=\"text\">");
+					$td4.append($input_sort);
+
+					var $link_del = $("<a class=\"btn btn-primary btn-sm\" href=\"javascript:;\"> <i class=\"glyphicon glyphicon-remove\"></i></a>")
+					$td5.append($link_del);
+
+					$tr.append($td1).append($td2).append($td3).append($td4).append($td5);
+					$("#table-address>tbody").append($tr);
+
+					$link_del.on("click", function() {
+						$(this).closest('tr').remove();
+					});
+				});
+				$("#form-supplier").bootstrapValidator().on("success.form.bv", function(e) {
+					e.preventDefault();
+					var $form = $(e.target);
+					
+					var addressCount = 0;
+					$.each($("#table-address>tbody>tr"), function(i, tr) {
+						var $tr = $(tr);
+						$tr.find("input[name=consignee]").attr("name", "addresses[" + i + "].consignee");
+						$tr.find("input[name=detail]").attr("name", "addresses[" + i + "].detail");
+						$tr.find("input[name=phone]").attr("name", "addresses[" + i + "].phone");
+						$tr.find("input[name=sortNo]").attr("name", "addresses[" + i + "].sortNo");
+						addressCount++;
+					});
+					$form.find("input[name=addressCount]").val(addressCount);
+					
+					$.post($form.attr('action'), $form.serialize(), function(result) {
+						if (result.success) {
+							$.alert({
+								title : false,
+								content : "保存成功",
+								buttons : {
+									ok : {
+										text : "返回列表",
+										action : function() {
+											location.href = "#/page/supplier";
+										}
+									}
+								}
+							});
+						} else {
+							$.alert({
+								title : false,
+								content : result.msg
+							});
+							$form.bootstrapValidator('disableSubmitButtons', false);
+						}
+					}, "json");
+				});
+			});
+		});
+	</script>
+</body>
+</html>
+

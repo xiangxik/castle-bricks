@@ -79,5 +79,6 @@
 		<module>brick-shop</module>
 		<module>brick-main</module>
 		<module>brick-cms</module>
+		<module>brick-invoicing</module>
 	</modules>
 </project>

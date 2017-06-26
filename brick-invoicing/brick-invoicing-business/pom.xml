@@ -3,15 +3,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.whenling</groupId>
-		<artifactId>brick-shop</artifactId>
+		<artifactId>brick-invoicing</artifactId>
 		<version>0.1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>brick-shop-business</artifactId>
+	<artifactId>brick-invoicing-business</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.whenling</groupId>
-			<artifactId>brick-base</artifactId>
+			<artifactId>brick-shop-business</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -42,5 +42,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
