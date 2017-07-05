@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.whenling.castle.integration.webapp.json.PathFilter;
 import com.whenling.castle.repo.domain.Result;
 import com.whenling.castle.repo.jpa.BaseJpaRepository;
 
@@ -103,6 +104,13 @@ public abstract class CrudController<T, I extends Serializable> extends BaseCont
 		}
 
 		return Result.success();
+	}
+
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	@ResponseBody
+	@PathFilter("*,*.id,*.name")
+	public T getInfo(@RequestParam("id") T entity) {
+		return entity;
 	}
 
 	protected void onShowIndexPage(Model model) {

@@ -127,7 +127,7 @@
 											url : base + "/specification/page",
 											post : function() {
 												var keyValues = $("#search-form").serialize();
-												return parseQueryString(keyValues);
+												return $c.parseQueryString(keyValues);
 											},
 											formatters : {
 												"name" : function(column, row) {

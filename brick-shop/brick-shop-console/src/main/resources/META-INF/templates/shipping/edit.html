@@ -1,0 +1,239 @@
+<!doctype html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<section class="content-header">
+		<h1>
+			发货 <small th:text="(${entity.new}?'新建':'编辑')+'发货'"></small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="javascript:;"><i class="fa fa-file-archive-o"></i> 发货管理</a></li>
+			<li class="active" th:text="(${entity.new}?'新建':'编辑')+'发货'"></li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<form id="form-shipping" class="form-horizontal" th:action="@{/shipping/save}" method="post" th:object="${entity}">
+			<input type="hidden" name="id" th:value="*{id}" />
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#tab_info" data-toggle="tab">发货信息</a></li>
+					<li><a href="#tab_shippingItems" data-toggle="tab">商品信息</a></li>
+				</ul>
+				<div class="tab-content" style="min-height: 400px;">
+					<div class="tab-pane active" id="tab_info">
+						<div class="form-horizontal">
+							<div class="box-body">
+
+								<div class="form-group">
+									<label for="input-sn" class="col-sm-2 control-label">发货编号</label>
+									<div class="col-sm-10">
+										<span class="form-control" th:text="*{sn}"></span> <input type="hidden" name="sn" th:value="*{sn}">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-order" class="col-sm-2 control-label">订单</label>
+									<div class="col-sm-10">
+										<div class="input-group">
+											<input type="hidden" name="order" th:value="*{order}?*{order.id}:''" id="input-order-hidden"> <input class="form-control"
+												id="input-order" placeholder="请选择订单" th:value="*{order}?*{order.name}:''" readonly="readonly" type="text"> <span
+												class="input-group-btn">
+												<button id="input-order-button" class="btn btn-default" type="button">选择订单</button>
+											</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-consignee" class="col-sm-2 control-label">收货人</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-consignee" placeholder="请输入收货人" name="consignee" th:value="*{consignee}" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="input-address" class="col-sm-2 control-label">地址</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-address" placeholder="请输入地址" name="address" th:value="*{address}" type="text">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="input-phone" class="col-sm-2 control-label">联系电话</label>
+
+									<div class="col-sm-10">
+										<input class="form-control" id="input-phone" placeholder="请输入联系电话" name="phone" th:value="*{phone}" type="text">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="input-memo" class="col-sm-2 control-label">附言</label>
+
+									<div class="col-sm-10">
+										<textarea class="form-control" id="input-memo" name="memo" rows="3" placeholder="请输入备注" th:text="*{memo}"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane" id="tab_shippingItems">
+						<input type="hidden" name="shippingItemsCount" value="" />
+						<div class="box-header">
+							<h3 class="box-title">商品信息</h3>
+
+							<div class="box-tools">
+								<div class="btn-group btn-group-sm">
+									<a id="button-shippingItem-add" class="btn btn-primary" href="javascript:;"> <i class="fa fa-plus"></i> 添加
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="box-body no-padding">
+							<table id="table-product" class="table table-bordered">
+								<thead>
+									<tr>
+										<th style="width: 40%">商品名称</th>
+										<th style="width: 20%">数量</th>
+										<th style="width: 20%">单位</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="box-footer">
+				<button type="button" class="btn btn-default" onclick="location.href='#/page/shipping'">返回列表</button>
+				<button type="submit" class="btn btn-success pull-right">保存</button>
+			</div>
+		</form>
+	</section>
+
+
+	<script type="text/javascript">
+		requirejs([ "domReady", "validator", "bootgrid" ], function(ready) {
+			ready(function() {
+				activeMenu("shipping");
+
+				var $addressSelect = $("#select-address");
+				var $orderId = $("#input-order-hidden");
+				var $orderName = $("#input-order");
+				var $shippingForm = $("#form-shipping");
+				var $inputConsignee = $shippingForm.find("input[name=consignee]");
+				var $inputAddress = $shippingForm.find("input[name=address]");
+				var $inputPhone = $shippingForm.find("input[name=phone]");
+				var $inputMemo = $shippingForm.find("textarea[name=memo]");
+				
+				var $productBody = $("#table-product>tbody");
+
+				var refreshAddress = function() {
+					$addressSelect.empty();
+					$productBody.empty();
+					
+					var orderId = $orderId.val();
+					if (orderId && orderId != "") {
+						$.get(base + "/order/detail", {
+							id : orderId
+						}, function(resp) {
+							$inputConsignee.val(resp.consignee);
+							$inputPhone.val(resp.phone);
+							$inputAddress.val(resp.address);
+							$inputMemo.text(resp.memo);
+							
+							$.each(resp.orderItems, function(i, item) {
+								var $tr = $("<tr />");
+								var $td1 = $("<td />");
+								var $td2 = $("<td />");
+								var $td3 = $("<td />");
+								
+								$td1.text(item.fullName);
+								$td2.text(item.unShippedQuantity);
+								$td3.append($("<input type='text' >"));
+								
+								$tr.append($td1).append($td2).append($td3);
+								$productBody.append($tr);
+							});
+							
+						}, "json");
+					}
+				}
+
+				refreshAddress();
+				
+				var $selectGrid = null;
+				$("#input-order-button").on("click", function() {
+					showGridDialog("选择订单", base + "/order/select", base + "/order/page", function(item) {
+						if (item) {
+							$orderId.val(item.id);
+							$orderName.val(item.name);
+						}
+						refreshAddress();
+					}, false, {
+						"customerName" : function(column, row) {
+							return row.customer ? row.customer.name : "";
+						},
+						"operatorName" : function(column, row) {
+							return row.operator ? row.operator.name : "";
+						}
+					});
+				});
+
+				$("#button-shippingItem-add").on("click", function() {
+					var $tr = $("<tr />");
+					var $td1 = $("<td />");
+					var $td2 = $("<td />");
+					var $td3 = $("<td />");
+					var $td4 = $("<td />").addClass("text-center").addClass("command-column");
+
+					var $input_group = $("<div class=\"input-group\" />");
+					var $input_group_hidden = $("<input type=\"hidden\" name=\"product\">");
+					var $input_sn_hidden = $("<input type=\"hidden\" name=\"sn\">");
+					var $input_group_text = $("<input class=\"form-control\" placeholder=\"请选择商品\" readonly=\"readonly\" type=\"text\">");
+					var $input_group_span = $("<span class=\"input-group-btn\"/>");
+					var $input_group_btn = $("<button class=\"btn btn-default\" type=\"button\">选择商品</button>");
+					$input_group_span.append($input_group_btn);
+					$input_group.append($input_group_hidden).append($input_sn_hidden).append($input_group_text).append($input_group_span);
+					$td1.append($input_group);
+
+					var $input_quantity = $("<input class=\"form-control\" name=\"quantity\" placeholder=\"请输入数量\" type=\"text\">");
+					$td2.append($input_quantity);
+
+					var $input_unit = $("<input class=\"form-control\" name=\"unit\" placeholder=\"请选择单位\" type=\"text\">");
+					$td3.append($input_unit);
+
+					var $link_del = $("<a class=\"btn btn-primary btn-sm\" href=\"javascript:;\"> <i class=\"glyphicon glyphicon-remove\"></i></a>")
+					$td4.append($link_del);
+
+					$tr.append($td1).append($td2).append($td3).append($td4);
+					$("#table-product>tbody").append($tr);
+
+					initShowProductDialogButton($input_group_btn);
+					$link_del.on("click", function() {
+						$(this).closest('tr').remove();
+					});
+				});
+
+				initValidateForm($shippingForm, "#/page/shipping", null, function($form) {
+					var shippingItemsCount = 0;
+					$.each($("#table-product>tbody>tr"), function(i, tr) {
+						var $tr = $(tr);
+						$tr.find("input[name=product]").attr("name", "shippingItems[" + i + "].product");
+						$tr.find("input[name=sn]").attr("name", "shippingItems[" + i + "].sn");
+						$tr.find("input[name=quantity]").attr("name", "shippingItems[" + i + "].quantity");
+						$tr.find("input[name=unit]").attr("name", "shippingItems[" + i + "].unit");
+						$tr.find("input[name=sortNo]").attr("name", "shippingItems[" + i + "].sortNo");
+						shippingItemsCount++;
+					});
+					$form.find("input[name=shippingItemsCount]").val(shippingItemsCount);
+				});
+			});
+		});
+	</script>
+</body>
+</html>
+

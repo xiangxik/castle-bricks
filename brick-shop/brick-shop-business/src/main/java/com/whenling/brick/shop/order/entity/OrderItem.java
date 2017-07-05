@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -46,20 +47,40 @@ public class OrderItem extends BaseEntity<Long> {
 	@Min(1)
 	@Max(100000000)
 	@Column(nullable = false)
-	private Integer quantity;
+	private Integer quantity = 0;
 
 	/** 已发货数量 */
 	@Column(nullable = false)
-	private Integer shippedQuantity;
+	private Integer shippedQuantity = 0;
 
 	/** 已退货数量 */
 	@Column(nullable = false)
-	private Integer returnQuantity;
+	private Integer returnQuantity = 0;
 
 	/** 预约发货数量 */
 	@Min(0)
 	@Column(nullable = false)
-	private Integer reservateQuantity;
+	private Integer reservateQuantity = 0;
+
+	/** 数量（件） */
+	@NotNull
+	@Min(1)
+	@Max(100000000)
+	@Column(nullable = false)
+	private Integer quantityPiece = 0;
+
+	/** 已发货数量（件） */
+	@Column(nullable = false)
+	private Integer shippedQuantityPiece = 0;
+
+	/** 已退货数量（件） */
+	@Column(nullable = false)
+	private Integer returnQuantityPiece = 0;
+
+	/** 预约发货数量（件） */
+	@Min(0)
+	@Column(nullable = false)
+	private Integer reservateQuantityPiece = 0;
 
 	public Order getOrder() {
 		return order;
@@ -131,6 +152,48 @@ public class OrderItem extends BaseEntity<Long> {
 
 	public void setReservateQuantity(Integer reservateQuantity) {
 		this.reservateQuantity = reservateQuantity;
+	}
+
+	public Integer getQuantityPiece() {
+		return quantityPiece;
+	}
+
+	public void setQuantityPiece(Integer quantityPiece) {
+		this.quantityPiece = quantityPiece;
+	}
+
+	public Integer getShippedQuantityPiece() {
+		return shippedQuantityPiece;
+	}
+
+	public void setShippedQuantityPiece(Integer shippedQuantityPiece) {
+		this.shippedQuantityPiece = shippedQuantityPiece;
+	}
+
+	public Integer getReturnQuantityPiece() {
+		return returnQuantityPiece;
+	}
+
+	public void setReturnQuantityPiece(Integer returnQuantityPiece) {
+		this.returnQuantityPiece = returnQuantityPiece;
+	}
+
+	public Integer getReservateQuantityPiece() {
+		return reservateQuantityPiece;
+	}
+
+	public void setReservateQuantityPiece(Integer reservateQuantityPiece) {
+		this.reservateQuantityPiece = reservateQuantityPiece;
+	}
+
+	@Transient
+	public Integer getUnShippedQuantity() {
+		return getQuantity() - getShippedQuantity() + getReturnQuantity();
+	}
+
+	@Transient
+	public Integer getUnShippedQuantityPiece() {
+		return getQuantityPiece() - getShippedQuantityPiece() + getReturnQuantityPiece();
 	}
 
 }

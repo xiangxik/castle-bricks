@@ -9,7 +9,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -22,6 +21,8 @@ import javax.validation.constraints.Size;
 
 import com.whenling.brick.base.entity.Admin;
 import com.whenling.brick.base.entity.User;
+import com.whenling.brick.shop.member.entity.Customer;
+import com.whenling.brick.shop.shipment.entity.Shipping;
 import com.whenling.castle.repo.jpa.DataEntity;
 
 /**
@@ -38,7 +39,7 @@ public class Order extends DataEntity<Admin, Long> {
 
 	/** 订单名称分隔符 */
 	private static final String NAME_SEPARATOR = " ";
-	
+
 	public static final String SN_TYPE = "order";
 
 	/**
@@ -121,8 +122,11 @@ public class Order extends DataEntity<Admin, Long> {
 
 	/** 用户 */
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false, updatable = false)
 	private User user;
+
+	/** 客户 */
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Customer customer;
 
 	/** 操作员 */
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -208,6 +212,14 @@ public class Order extends DataEntity<Admin, Long> {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public Admin getOperator() {
