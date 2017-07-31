@@ -33,6 +33,12 @@ public class ShippingItem extends BaseEntity<Long> {
 	@Column(nullable = false, updatable = false)
 	private Integer quantity;
 
+	/** 数量（件） */
+	@NotNull
+	@Min(1)
+	@Column(nullable = false, updatable = false)
+	private Integer quantityPiece;
+
 	/** 发货单 */
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false, updatable = false)
@@ -60,6 +66,14 @@ public class ShippingItem extends BaseEntity<Long> {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+
+	public Integer getQuantityPiece() {
+		return quantityPiece;
+	}
+
+	public void setQuantityPiece(Integer quantityPiece) {
+		this.quantityPiece = quantityPiece;
 	}
 
 	public Shipping getShipping() {

@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,7 +23,7 @@ import com.whenling.castle.repo.jpa.DataEntity;
 public class Shipping extends DataEntity<Admin, Long> {
 
 	private static final long serialVersionUID = 6662739372149174927L;
-	
+
 	public static final String SN_TYPE = "shipping";
 
 	/** 编号 */
@@ -32,13 +31,13 @@ public class Shipping extends DataEntity<Admin, Long> {
 	private String sn;
 
 	/** 配送方式 */
-//	@NotNull
-//	@Column(nullable = false, updatable = false)
+	// @NotNull
+	// @Column(nullable = false, updatable = false)
 	private String shippingMethod;
 
 	/** 物流公司 */
-//	@NotNull
-//	@Column(nullable = false, updatable = false)
+	// @NotNull
+	// @Column(nullable = false, updatable = false)
 	private String deliveryCorp;
 
 	/** 运单号 */
@@ -82,7 +81,6 @@ public class Shipping extends DataEntity<Admin, Long> {
 	@JoinColumn(name = "orders", nullable = false, updatable = false)
 	private Order order;
 
-	@Valid
 	@NotNull
 	@OneToMany(mappedBy = "shipping", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ShippingItem> shippingItems = new ArrayList<>();
@@ -182,4 +180,5 @@ public class Shipping extends DataEntity<Admin, Long> {
 	public void setShippingItems(List<ShippingItem> shippingItems) {
 		this.shippingItems = shippingItems;
 	}
+
 }

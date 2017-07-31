@@ -97,13 +97,17 @@ public abstract class CrudController<T, I extends Serializable> extends BaseCont
 	public Result batchDelete(@RequestParam(value = "ids[]") T[] entities) {
 		if (entities != null) {
 			for (T entity : entities) {
-				if (onBeforeDelete(entity)) {
-					baseJpaRepository.delete(entity);
-				}
+				onDelete(entity);
 			}
 		}
 
 		return Result.success();
+	}
+
+	protected void onDelete(T entity) {
+		if (onBeforeDelete(entity)) {
+			baseJpaRepository.delete(entity);
+		}
 	}
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
@@ -133,9 +137,6 @@ public abstract class CrudController<T, I extends Serializable> extends BaseCont
 
 	protected boolean onBeforeDelete(T entity) {
 		return true;
-	}
-
-	protected void onAfterDelete(T entity) {
 	}
 
 	protected BaseJpaRepository<T, I> getRepository() {

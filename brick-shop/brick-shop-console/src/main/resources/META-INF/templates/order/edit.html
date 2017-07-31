@@ -136,7 +136,33 @@
 						</div>
 					</div>
 
-					<div class="tab-pane" id="tab_shippings"></div>
+					<div class="tab-pane" id="tab_shippings">
+						<table id="table-shipping" class="table table-bordered">
+							<thead>
+								<tr>
+									<th style="width: 40%">发货单号</th>
+									<th style="width: 40%">运单号</th>
+									<th class="text-center command-column" style="width: 20%">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="shipping : *{shippings}">
+									<td>
+										<span th:text="${shipping.sn}"></span>
+									</td>
+									<td>
+										<span th:text="${shipping.trackingNo}"></span>
+									</td>
+									<td class="text-center command-column">
+										<div class="btn-group btn-group-sm">
+											<a class="btn btn-primary" th:href="'#/page/shipping/view/'+${shipping.id}"> <i class="fa fa-eye"></i>
+											</a>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 
 					<div class="tab-pane" id="tab_orderLogs"></div>
 
